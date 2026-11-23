@@ -1,0 +1,49 @@
+version=2
+title=Jasione for ProjectZomboid
+description=[h1]Jasione for Project Zomboid[/h1]
+description=
+description=[b]Requires Leaf.[/b] Make sure to follow Leaf's installation instructions.
+description=
+description=It's a fork of Jasione that adds Project Zomboid support. All credits go to original author: https://github.com/decce6/Jasione.
+description=
+description=[h2]Overview[/h2]
+description=
+description=Jasione is an optimization mod that reduces memory allocation (GC pressure).
+description=
+description=The Java compiler generates, for each enum class, a [i]values()[/i] method that can be used to retrieve all enum values as an array. This method clones the array before returning it, ensuring that callers of this method can safely mutate the array without affecting other callers. This, however, incurs a performance cost. When invoked in hot paths, these small memory allocations accumulate and increase GC pressure.
+description=
+description=Jasione addresses this issue by redirecting the [i]values()[/i] calls that do not mutate the returned array to use a cache, eliminating the cloning overhead and the memory allocation. For details on how this is implemented safely, see to the "Technical Details" section below.
+description=
+description=[h2]Configuration[/h2]
+description=
+description=Jasione currently offers several debug options, which can be used to inspect the optimization result. The configuration resides in [i]config/jasione.toml[/i].
+description=[code]
+description=#Specifies whether to enable the mod
+description=enabled = true
+description=
+description=[debug]
+description=    #When enabled, prints stacktrace when bytecode analysis fails. These failures are harmless and can be safely dismissed, but the failed methods will not be optimized.
+description=    #It is recommended that you keep this enabled and report failures to the issue tracker of Jasione.
+description=    printAnalysisFailure = true
+description=        #When enabled, logs statistics when optimizations are applied
+description=        printOptimization = false
+description=        #When enabled, dumps transformed classes to the ".jasione.out" folder
+description=        dumpClasses = false
+description=[/code]
+description=
+description=[h2]FAQs[/h2]
+description=
+description=[b]Doesn't the JIT optimize the Enum#values() calls when they're safe?[/b]
+description=
+description=No, the JIT compiler doesn't currently recognize even the most trivial use patterns like iterating through the values array. The cloning and memory allocation overhead persists, per [url=https://github.com/decce6/Jasione_JMH]JMH tests[/url].
+description=
+description=[h2]Technical Details[/h2]
+description=
+description=The contract of [i]Enum#values[/i] (where [i]Enum[/i] refers to any enum class) is that the returned array is fresh and can be freely mutated. Therefore, we must identify which callers are safe to optimize by analyzing whether they mutate the array or the array escapes. This is made possible by utilizing the asm-analysis library. If array mutation or escapes are detected via bytecode analysis, the call remains unchanged to preserve correctness.
+description=
+description=We need to find a place to store the cached values array, because the synthetic [i]$VALUES[/i] field for enum classes is private. The current implementation performs runtime class generation. For each enum class, a corresponding cache holder class is generated to store the values array as a [i]static final[/i] field. For example, when the transformer first detects use of [i]net.minecraft.core.Direction#values[/i], it generates the class [i]me.decce.jasione.cached.net.minecraft.core.Direction[/i], which holds a cached values array and various other metadata to ensure correctness. With this, it can transform all callers of the original [i]values()[/i] method to use the cached class.
+description=
+description=[hr][/hr]
+description=Source: https://github.com/Stikulzon/zombie-buddy-leaf-bridge
+tags=Build 42
+visibility=2

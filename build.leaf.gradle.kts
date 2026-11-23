@@ -6,6 +6,7 @@ plugins {
 }
 
 val modId = property("modid").toString()
+val workshopItemName = property("mod_name").toString()
 
 repositories {
     mavenCentral()
@@ -47,21 +48,23 @@ tasks {
         dependsOn(leafJar)
     }
 
-    val localMod = register<Zip>("packageLeafMod") {
+    val workshop = register<Sync>("buildWorkshop") {
         group = "build"
-        archiveClassifier = "local-mod"
-        into("$modId/42") {
+        into(layout.buildDirectory.dir("distributions/$workshopItemName"))
+        from(rootProject.file("src/leaf/workshop"))
+
+        into("Contents/mods/$modId/42") {
             from(rootProject.file("src/leaf/mod.info"))
-            into("media/java") {
-                from(leafJar.flatMap { it.archiveFile })
+            from(leafJar.flatMap { it.archiveFile }) {
+                into("media/java")
             }
         }
     }
 
     register<Copy>("buildAndCollect") {
         group = "build"
+        dependsOn(workshop)
         from(leafJar.flatMap { it.archiveFile })
-        from(localMod.flatMap { it.archiveFile })
         into(rootProject.layout.buildDirectory.dir("libs"))
     }
 }
