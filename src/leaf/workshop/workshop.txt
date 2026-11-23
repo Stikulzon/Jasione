@@ -44,6 +44,6 @@ description=
 description=We need to find a place to store the cached values array, because the synthetic [i]$VALUES[/i] field for enum classes is private. The current implementation performs runtime class generation. For each enum class, a corresponding cache holder class is generated to store the values array as a [i]static final[/i] field. For example, when the transformer first detects use of [i]net.minecraft.core.Direction#values[/i], it generates the class [i]me.decce.jasione.cached.net.minecraft.core.Direction[/i], which holds a cached values array and various other metadata to ensure correctness. With this, it can transform all callers of the original [i]values()[/i] method to use the cached class.
 description=
 description=[hr][/hr]
-description=Source: https://github.com/Stikulzon/zombie-buddy-leaf-bridge
+description=Source: https://github.com/Stikulzon/Jasione
 tags=Build 42
 visibility=2

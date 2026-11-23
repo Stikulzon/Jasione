@@ -4,7 +4,10 @@
   "version": "${mod_version_full}",
   "name": "${mod_name}",
   "description": "${mod_description}",
-  "authors": ["decce"],
+  "authors": [
+    "decce",
+    "Zefir (Stickulzon)"
+  ],
   "license": "${mod_license}",
   "icon": "${modid}.png",
   "environment": "*",
