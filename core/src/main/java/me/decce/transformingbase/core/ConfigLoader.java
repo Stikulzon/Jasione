@@ -2,63 +2,41 @@ package me.decce.transformingbase.core;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
-import me.decce.transformingbase.constants.Constants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ConfigLoader {
-    private static final Path CONFIG_PATH;
-    private static final Path CONFIG_FILE;
-
-    static {
-        CONFIG_PATH = Paths.get("config");
-        CONFIG_FILE = CONFIG_PATH.resolve(Constants.MOD_ID + ".toml");
-        try {
-            if (!Files.exists(CONFIG_PATH)) {
-                Files.createDirectories(CONFIG_PATH);
-            }
-        } catch (IOException ignored) {}
-    }
-
-    private static CommentedFileConfig makeNightConfig() {
-        return CommentedFileConfig.builder(CONFIG_FILE, TomlFormat.instance())
+    private static CommentedFileConfig makeNightConfig(Path configFile) {
+        return CommentedFileConfig.builder(configFile, TomlFormat.instance())
                 .preserveInsertionOrder()
                 .sync()
                 .build();
     }
 
-    public static void save(JasioneConfig config) {
-        try (var night = toNightConfig(config)) {
+    public static void save(Path configFile, JasioneConfig config) {
+        try (var night = toNightConfig(configFile, config)) {
+            Files.createDirectories(configFile.getParent());
             night.save();
         } catch (Exception e) {
-            Jasione.LOGGER.error("Failed to save configuration!", e);
+            Jasione.LOGGER.error("Failed to save configuration at {}", configFile.toAbsolutePath(), e);
         }
     }
 
-    public static JasioneConfig load() {
-        return loadConfig();
-    }
-
-    private static JasioneConfig loadConfig() {
-        if (CONFIG_FILE.toFile().exists()) {
+    public static JasioneConfig load(Path configFile) {
+        if (Files.exists(configFile)) {
             try {
-                return fromNightConfig();
+                return fromNightConfig(configFile);
             } catch (Exception e) {
-                Jasione.LOGGER.error("Failed to read configuration!", e);
+                Jasione.LOGGER.error("Failed to read configuration at {}", configFile.toAbsolutePath(), e);
             }
         }
         return new JasioneConfig();
     }
 
-    private static CommentedFileConfig toNightConfig(JasioneConfig config) {
-        var night = makeNightConfig();
+    private static CommentedFileConfig toNightConfig(Path configFile, JasioneConfig config) {
+        var night = makeNightConfig(configFile);
         try {
             for (Field field : JasioneConfig.class.getDeclaredFields()) {
                 var modifiers = field.getModifiers();
@@ -80,9 +58,9 @@ public class ConfigLoader {
         return night;
     }
 
-    private static JasioneConfig fromNightConfig() {
+    private static JasioneConfig fromNightConfig(Path configFile) {
         var config = new JasioneConfig();
-        try (var night = makeNightConfig()) {
+        try (var night = makeNightConfig(configFile)) {
             night.load();
             for (Field field : JasioneConfig.class.getDeclaredFields()) {
                 var modifiers = field.getModifiers();

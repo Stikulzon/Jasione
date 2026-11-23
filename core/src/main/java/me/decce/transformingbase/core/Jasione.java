@@ -15,16 +15,20 @@ public class Jasione {
     public static JasioneConfig config;
 
     public static JasioneConfig getConfig() {
+        return getConfig(Path.of("config"));
+    }
+
+    public static JasioneConfig getConfig(Path configDirectory) {
         if (config == null) {
-            config = loadConfig();
+            config = loadConfig(configDirectory.resolve(Constants.MOD_ID + ".toml"));
             cleanup();
         }
         return config;
     }
 
-    private static JasioneConfig loadConfig() {
-        config = ConfigLoader.load();
-        ConfigLoader.save(config);
+    private static JasioneConfig loadConfig(Path configFile) {
+        config = ConfigLoader.load(configFile);
+        ConfigLoader.save(configFile, config);
         return config;
     }
 

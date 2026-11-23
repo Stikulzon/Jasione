@@ -16,7 +16,7 @@ description=Jasione addresses this issue by redirecting the [i]values()[/i] call
 description=
 description=[h2]Configuration[/h2]
 description=
-description=Jasione currently offers several debug options, which can be used to inspect the optimization result. The configuration resides in [i]config/jasione.toml[/i].
+description=Jasione currently offers several debug options, which can be used to inspect the optimization result. The configuration resides in [i]Zomboid/config/jasione.toml[/i].
 description=[code]
 description=#Specifies whether to enable the mod
 description=enabled = true
