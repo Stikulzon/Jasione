@@ -1,4 +1,4 @@
-//? fabric {
+//? fabric || leaf {
 package org.spongepowered.asm.mixin.transformer;
 
 import me.decce.transformingbase.constants.Constants;

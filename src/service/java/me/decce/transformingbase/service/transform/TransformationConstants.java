@@ -11,7 +11,7 @@ import java.lang.invoke.MethodHandle;
 
 public class TransformationConstants {
     public static final String VALUES_METHOD_NAME = "values";
-    //? fabric {
+    //? fabric || leaf {
     private static final ClassLoader THIS_CLASS_LOADER = CommonTransformer.class.getClassLoader();
      //? }
     //? forge || (neoforge && <1.21.10) {
@@ -25,7 +25,7 @@ public class TransformationConstants {
     public static ClassLoader findClassLoaderForCacheClass() {
         // Previously, we relied on the thread context classloader, which may be manipulated or simply does not exist
         // See: https://github.com/decce6/Jasione/issues/3 and https://github.com/decce6/Jasione/issues/4
-        //? fabric {
+        //? fabric || leaf {
         // On Fabric, we will be loaded by knot, so we just use the classloader for this class
         return THIS_CLASS_LOADER;
         //? } else if neoforge && >=1.21.10 {

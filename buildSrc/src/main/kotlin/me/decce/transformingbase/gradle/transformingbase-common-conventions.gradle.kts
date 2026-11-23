@@ -15,12 +15,13 @@ val shade = configurations.create("shade")
 configurations.implementation.get().extendsFrom(shade)
 
 val platform = prop("deps.platform")
-fun fullModVersion() = "${prop("mod_version")}+${prop("deps.minecraft")}-${platform}"
+val gameVersion = prop(if (platform == "leaf") "deps.zomboid" else "deps.minecraft")
+fun fullModVersion() = "${prop("mod_version")}+$gameVersion-$platform"
 
 val stonecutter = project.extensions.getByType<StonecutterBuildExtension>()
 val mcVersion = stonecutter.current.version
 val javaVersion =
-    if (stonecutter.eval(mcVersion, ">=26")) 25
+    if (platform == "leaf" || stonecutter.eval(mcVersion, ">=26")) 25
     else if (stonecutter.eval(mcVersion, ">=1.20.5")) 21
     else if (stonecutter.eval(mcVersion, ">=1.18")) 17
     else 17
@@ -40,10 +41,17 @@ val modSourceSet = sourceSets.create("mod-src") {
     compileClasspath += sourceSets["main"].compileClasspath
     runtimeClasspath += sourceSets["main"].runtimeClasspath
     annotationProcessorPath += sourceSets["main"].annotationProcessorPath
+    if (platform == "leaf") {
+        java.exclude("**/*")
+        resources.exclude("**/*")
+    }
 }
 val serviceSourceSet = sourceSets.create("service") {
     compileClasspath += sourceSets["main"].compileClasspath
     runtimeClasspath += sourceSets["main"].runtimeClasspath
+    if (platform != "fabric" && platform != "leaf") {
+        java.exclude("**/service/mixin/**")
+    }
 }
 
 dependencies {
@@ -133,12 +141,16 @@ tasks {
         val propMap = mutableMapOf<String, Any>().apply {
             project.properties.forEach { k, v -> put(k.toString(), v.toString()) }
             put("mod_version_full", fullModVersion())
-            put("minecraft_supported_fabric", supportedVersionFabric())
-            put("minecraft_supported_forge", supportedVersionForge())
+            if (platform != "leaf") {
+                put("minecraft_supported_fabric", supportedVersionFabric())
+                put("minecraft_supported_forge", supportedVersionForge())
+            } else {
+                put("zomboid_version", gameVersion)
+            }
             put("java_version", javaVersion)
         }
         inputs.property("propMap", propMap)
-        filesMatching(listOf("**/fabric.mod.json", "**/neoforge.mods.toml", "**/mods.toml", "**/pack.mcmeta")) {
+        filesMatching(listOf("**/fabric.mod.json", "**/neoforge.mods.toml", "**/mods.toml", "**/pack.mcmeta", "**/leaf.mod.json")) {
             expand(propMap)
         }
     }
@@ -148,7 +160,7 @@ tasks {
     }
 }
 
-publishMods {
+if (platform != "leaf") publishMods {
     type = STABLE
     version = fullModVersion()
     dryRun = providers.environmentVariable("CURSEFORGE_TOKEN").getOrNull() == null || providers.environmentVariable("MODRINTH_TOKEN").getOrNull() == null

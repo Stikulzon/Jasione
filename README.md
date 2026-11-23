@@ -1,4 +1,6 @@
-# Jasione
+# Jasione with Project Zomboid support
+
+It's a fork of Jasione that adds Project Zomboid support with [Leaf](https://github.com/LeafPZ).
 
 ## Overview
 

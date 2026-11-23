@@ -80,11 +80,15 @@ stonecutter {
         fun forge(versions: Iterable<String>) {
             optionallyInclude("forge", "neoloom", versions)
         }
+        fun leaf(versions: Iterable<String>) {
+            optionallyInclude("leaf", "leaf", versions)
+        }
 
         fabricUnobfuscated (listOf("26.1"))
         fabric (listOf("1.21.11", "1.20.1"))
         neoforge (listOf("26.1", "1.21.11", "1.21.1"))
         forge (listOf("1.20.1", "1.18.2"))
+        leaf(listOf("42.21.0"))
 
         // This is the default target.
         // https://stonecutter.kikugie.dev/stonecutter/guide/setup#settings-settings-gradle-kts

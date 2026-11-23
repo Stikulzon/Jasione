@@ -2,18 +2,11 @@ package me.decce.transformingbase.service.fabric;
 
 //? if fabric {
 import me.decce.transformingbase.core.Jasione;
-import me.decce.transformingbase.service.transform.CommonTransformer;
-import me.decce.transformingbase.service.transform.ReflectionUtil;
+import me.decce.transformingbase.service.mixin.MixinTransformerRegistration;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
-import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.function.Predicate;
-
 public class FabricPreLaunchEntrypoint implements PreLaunchEntrypoint {
-    @SuppressWarnings("unchecked")
     @Override
     public void onPreLaunch() {
         if (!Jasione.getConfig().enabled) {
@@ -24,26 +17,7 @@ public class FabricPreLaunchEntrypoint implements PreLaunchEntrypoint {
             // LibJF is in use - skip, we'll use the ASM functionalities provided by it (see LibJFEntrypoint)
             return;
         }
-        try {
-            var processorField = Class.forName("org.spongepowered.asm.mixin.transformer.MixinTransformer").getDeclaredField("processor");
-            processorField.setAccessible(true);
-            var processor = processorField.get(transformer);
-            var coprocessorsField = Class.forName("org.spongepowered.asm.mixin.transformer.MixinProcessor").getDeclaredField("coprocessors");
-            coprocessorsField.setAccessible(true);
-            ArrayList<Object> coprocessors = (ArrayList<Object>) coprocessorsField.get(processor);
-            coprocessors.add(createCoprocessor(MixinEnvironment.class.getClassLoader(), CommonTransformer::process));
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Object createCoprocessor(ClassLoader classLoader, Predicate<ClassNode> predicate) throws Throwable {
-        String className = "org.spongepowered.asm.mixin.transformer.JasioneMixinCoprocessor";
-        try (var res = this.getClass().getResourceAsStream("/" + className.replace('.', '/') + ".class")) {
-            var bytes = Objects.requireNonNull(res).readAllBytes();
-            var clazz = ReflectionUtil.defineClass(classLoader, className, bytes);
-            return clazz.getConstructor(Predicate.class).newInstance(predicate);
-        }
+        MixinTransformerRegistration.register(transformer);
     }
 }
 //?}

@@ -5,7 +5,7 @@ plugins {
 stonecutter active "1.21.11-fabric"
 
 stonecutter parameters {
-    constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge", "forge")
+    constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge", "forge", "leaf")
 }
 
 tasks.register("publishAll") {
