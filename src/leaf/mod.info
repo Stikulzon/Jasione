@@ -1,3 +1,7 @@
 name=Jasione
 id=jasione
 description=Reduces allocations from safe Enum.values() calls.
+author=decce, Zefir (Stickulzon)
+poster=preview.png
+icon=preview.png
+url=https://github.com/Stikulzon/Jasione

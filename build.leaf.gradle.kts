@@ -55,6 +55,7 @@ tasks {
 
         into("Contents/mods/$modId/42") {
             from(rootProject.file("src/leaf/mod.info"))
+            from(rootProject.file("src/leaf/workshop/preview.png"))
             from(leafJar.flatMap { it.archiveFile }) {
                 into("media/java")
             }
