@@ -138,6 +138,8 @@ tasks {
         if (platform != "fabric") exclude("**/fabric.mod.json")
         if (platform != "neoforge") exclude("**/neoforge.mods.toml")
         if (platform != "forge") exclude("**/mods.toml", "**/pack.mcmeta")
+        if (platform != "leaf") exclude("**/leaf.mod.json")
+        exclude("**/mod.info", "workshop/**")
         val propMap = mutableMapOf<String, Any>().apply {
             project.properties.forEach { k, v -> put(k.toString(), v.toString()) }
             put("mod_version_full", fullModVersion())

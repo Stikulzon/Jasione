@@ -12,7 +12,7 @@
   "icon": "${modid}.png",
   "environment": "*",
   "entrypoints": {
-    "preLaunch": ["me.decce.${modid}.service.leaf.LeafPreLaunchEntrypoint"]
+    "preLaunch": ["me.decce.transformingbase.service.leaf.LeafPreLaunchEntrypoint"]
   },
   "depends": {
     "leaf-loader": ">=${leaf_loader_version}",

@@ -21,6 +21,9 @@ pluginManagement {
         maven("https://maven.neoforged.net/releases/")
         maven("https://maven.minecraftforge.net/")
         maven("https://maven.kikugie.dev/releases")
+        maven("https://maven.aoqia.dev/releases/") {
+            content { includeGroupAndSubgroups("dev.aoqia.leaf") }
+        }
         exclusiveMaven("RelativityMC", "org.relativitymc", "https://repo.codemc.io/repository/relativitymc/")
         exclusiveMaven("Sponge", "org.spongepowered", "https://repo.spongepowered.org/repository/maven-public")
     }

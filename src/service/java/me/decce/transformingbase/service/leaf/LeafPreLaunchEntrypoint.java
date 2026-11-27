@@ -1,5 +1,7 @@
 package me.decce.transformingbase.service.leaf;
 
+//? if leaf {
+/*
 import dev.aoqia.leaf.loader.api.LeafLoader;
 import dev.aoqia.leaf.loader.api.entrypoint.PreLaunchEntrypoint;
 import me.decce.transformingbase.core.Jasione;
@@ -15,3 +17,4 @@ public class LeafPreLaunchEntrypoint implements PreLaunchEntrypoint {
         MixinTransformerRegistration.register(MixinEnvironment.getCurrentEnvironment().getActiveTransformer());
     }
 }
+*///?}
